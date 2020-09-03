@@ -1,0 +1,30 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rules": {
+    "no-reference": false,
+    "interface-name": [true, "never-prefix"],
+    "no-implicit-dependencies": [true, "dev"],
+    "no-var-keyword": true,
+    "no-parameter-reassignment": false,
+    "typedef": [true, ""],
+    "readonly-keyword": [true, "ignore-local", "ignore-class", "ignore-interface"],
+    "prefer-object-spread": false,
+    "prefer-conditional-expression": false,
+    "no-var-requires": false,
+    "no-let": false,
+    "no-object-mutation": false,
+    "no-this": false,
+    "no-this-assignment": false,
+    "no-class": false,
+    "no-empty": false,
+    "no-console": false,
+    "no-expression-statement": [
+      false,
+      {
+        "ignore-prefix": ["console.", "process.exit"]
+      }
+    ],
+    "no-if-statement": false,
+    "curly": [true, "ignore-same-line"]
+  }
+}

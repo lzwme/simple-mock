@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Simple Mock Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="showTip" class="tip text-center hide"></div>
+
+<h1>Simple Mock - HTTP DEMO</H1>
+<h3>可以通过修改URL地址触发不同的请求，观察server日志及mock目录的情况</h3>
+<p>
+  <span>URL:</span>
+  <input type="text" class="i-input" value="/rest/user/666?rnd=123456" id="httpSendInput" style="width: 300px">
+
+  <select id="httpMethod" class="i-select">
+    <option value="post">post</option>
+    <option value="get">get</option>
+  </select>
+
+  <select id="contentType" class="i-select">
+    <option value="application/json">application/json</option>
+    <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+  </select>
+
+  <button id="httpSendBtn" class="btn">Send Request</button>
+</p>
+
+
+<h1>WS CLIENT DEMO(模拟实际的 WS 客户端应用)</H1>
+<h3>请开启或关闭 mock，并开启 ws-proxy-server 服务(实现MOCK与PROXY功能)，通过打开的MOCK信息发送页面发送不同的请求，并查看比对当前页面的信息接收情况</h3>
+<div class="msg-edit-container">
+    <textarea id="msgEdit" rows="5" placeholder="请输入要发送给服务端的 websocket 信息"></textarea>
+</div>
+
+<div class="btns text-center">
+    <button class="btn" id="formatBtn">格式化</button>
+    <button id="sendMsgBtn" class="btn send-msg">发送</button>
+    <label for="isClearMsg">
+        <input type="checkbox" id="isClearMsg"> 发送后清空消息
+    </label>
+</div>
+
+<div id="msgLog" class="msg-log"></div>
+
+<script src="http-demo.js"></script>
+<script src="ws-demo.js"></script>
+
+</body>
+</html>

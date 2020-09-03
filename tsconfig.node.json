@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "outDir": "./dist-node/",
+    "sourceMap": false,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "declaration": false,
+    "lib": ["esnext", "dom", "webworker"],
+    "typeRoots": ["./typings", "./node_modules/@types"]
+  },
+  "exclude": ["dist", "src", "PBDevTools", "node_modules", "**/node_modules/*"],
+  "include": ["plugins"]
+}

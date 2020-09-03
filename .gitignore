@@ -1,0 +1,45 @@
+customdata
+!customdata/README.md
+
+# OS X
+.DS_Store*
+Icon?
+._*
+.idea
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+/release
+.vscode
+
+# Linux
+.directory
+*~
+
+
+# npm
+node_modules
+output
+*.log
+*.gz
+
+
+# Coveralls
+coverage
+
+# Benchmarking
+benchmarks/graphs
+
+*_bak
+simple-mock-config.**
+build
+dist
+dist-module
+.nyc_output
+test
+src/**.js
+.idea/*
+package-lock.json
+yarn.lock

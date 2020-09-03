@@ -1,0 +1,88 @@
+
+html, body {
+    height: auto;
+    overflow: initial;
+    color: white;
+    margin: auto;
+}
+body {
+    background-color: #201834;
+}
+body > div {
+    margin: auto;
+}
+
+.hide {
+    display: none;
+}
+
+h1, h2 {
+    margin: 0.5em 0;
+    text-align: center;
+}
+
+h1.header {
+    margin: 20px 0 10px;
+}
+
+.ws-size {
+    font-size: 18px;
+    padding: 0.5em;
+}
+.ws-size span {
+    font-size: 22;
+    color: #ff0;
+}
+
+.msg-container {
+    width: 90vw;
+    margin: 10px auto;
+    text-align: left;
+}
+.msg-container textarea {
+    width: 100%;
+    min-height: calc(100vh - 25em);
+}
+.btns button {
+    min-width: 100px;
+}
+
+.btns .send-msg {
+background: #39f;
+border-color: #39f;
+color: #fff;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.tip {
+position: absolute;
+top: 10px;
+text-align: center;
+background: #fff;
+border-radius: 10px;
+color: #39f;
+width: 90%;
+left: 3%;
+padding: 1.8%;
+}
+.info {
+    color: #39f;
+}
+.success {
+    color: green;
+}
+.error {
+    color: red;
+}
+.warn {
+    color: #ff0;
+    background-color: #555;
+}
+
+.CodeMirror {
+  /* border: 1px solid #eee; */
+  min-height: calc(100vh - 250px);
+}
