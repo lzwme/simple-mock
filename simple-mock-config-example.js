@@ -1,9 +1,9 @@
 /**
  * simple-mock 配置信息
  * @see {@link https://github.com/lzwme/simple-mock/blob/master/types/index.d.ts}
- * @see {@link ./node_modules/@lzwme/simple-mock/types/index.d.ts}
  */
-// import { SimpleMockConfig } from '@lzwme/simple-mock';
+
+/** @type {import('@lzwme/simple-mock').SimpleMockConfig} */
 module.exports = {
   mockFileDir: 'mock',
   isEnableMock: false,
