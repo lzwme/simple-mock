@@ -1,8 +1,8 @@
-const zlib = require('zlib');
-const concatStream = require('concat-stream');
+import fs from 'fs';
+import zlib from 'zlib';
+import concatStream from 'concat-stream';
 import chalk from 'chalk';
 import utils from './utils';
-import fs from 'fs';
 import CONFIG from './config';
 import { ContentEncoding } from '../types';
 
@@ -12,7 +12,7 @@ import { ContentEncoding } from '../types';
  * @param contentEncoding {string} http header content-encoding: gzip/deflate 或 'decoded'
  * @param callback {Function} 自定义的回调方法，可以用于修改回调内容
  */
-export const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) => {
+const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) => {
   // res 已经是解码的内容了
   if (contentEncoding === 'decoded') {
     if (callback) callback(res);
@@ -22,41 +22,54 @@ export const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callb
   let unzip;
   let zip;
 
-  // 只处理 content-encoding 为 gizp 和 deflate 的
-  if (contentEncoding && contentEncoding.includes('gzip')) {
-    unzip = zlib.Gunzip();
-    zip = zlib.Gzip();
-  } else if (contentEncoding === 'deflate') {
-    unzip = zlib.Inflate();
-    zip = zlib.Deflate();
-  } else {
-    // try {
-    //   if (!res.on || !res.end) return;
-    //   const bufs = [];
-
-    //   res.on('data', (data) => bufs.push(data));
-    //   res.on('end', () => {
-    //     const body = Buffer.concat(bufs).toString();
-    //     if (callback) callback(body);
-    //     // if (res.end) res.end(body);
-    //   });
-    // } catch (err) {
-    //   CONFIG.log(err);
-    // }
-    CONFIG.log(chalk.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
-    return;
-  }
-
   // 用于在修改内容后回调执行
   const _write = res.write;
   const _end = res.end;
 
-  if (unzip) {
-    unzip.on('error', (e) => {
-      CONFIG.log('Unzip error: ', e);
-      _end.call(res);
-    });
+  // 只处理 content-encoding 为 gizp 和 deflate 的
+  if (contentEncoding && contentEncoding.includes('gzip')) {
+    unzip = zlib.createGunzip();
+    zip = zlib.createGzip();
+  } else if (contentEncoding === 'deflate') {
+    unzip = zlib.createInflate();
+    zip = zlib.createDeflate();
+  } else {
+    try {
+      const chunks = [];
+
+      res.write = (chunk) => {
+        _write.call(res, chunk);
+        chunks.push(chunk);
+      };
+      res.end = (data) => {
+        if (data) chunks.push(data);
+        let body = Buffer.from(chunks.join(''));
+
+        if (callback) {
+          try {
+            body = JSON.parse(body.toString());
+          } catch (e) {
+            CONFIG.info(chalk.redBright('JSON.parse error:'), e);
+          }
+
+          body = callback(body);
+          body = Buffer.from(JSON.stringify(body));
+        }
+
+        _end.call(res, body);
+      };
+    } catch (err) {
+      CONFIG.log(err);
+    }
+    // CONFIG.log(chalk.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
+    return;
   }
+
+  if (!unzip) return;
+  unzip.on('error', (e) => {
+    CONFIG.log('Unzip error: ', e);
+    _end.call(res);
+  });
 
   // The rewrite response method is replaced by unzip stream.
   res.write = (data) => {
@@ -80,7 +93,7 @@ export const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callb
     // 执行修改请求内容的回调方法
     if (callback) body = callback(body);
 
-    body = new Buffer(JSON.stringify(body));
+    body = Buffer.from(JSON.stringify(body));
 
     // Call the response method and recover the content-encoding.
     zip.on('data', (chunk) => {
@@ -93,6 +106,7 @@ export const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callb
     zip.write(body);
     zip.end();
   });
+
   unzip.pipe(concatWrite);
 };
 
@@ -128,11 +142,15 @@ const onDecodeResponse = (content, absolutePath, req, res) => {
   return content;
 };
 
-// 保存 API 请求返回的内容到 customdata 目录
-export const saveApi = (req, res, contentEncoding: ContentEncoding, filename: string) => {
+/** 保存 API 返回信息 */
+export const saveApi = (req, res, contentEncoding: ContentEncoding, filename = '') => {
   const config = CONFIG.renderConfig(false);
   // CONFIG.debug('TRY saveApi...');
-  if (!config.isAutoSaveApi || !filename) return;
+  if (!config.isAutoSaveApi) return;
+
+  filename = utils.getFileName(CONFIG.config, req, res, filename, 'save');
+
+  if (!filename) return;
 
   const absolutePath = utils.getDataFilePath(filename, 'autosave');
 

@@ -212,23 +212,22 @@ const CONFIG = {
   /** log.info */
   info: (...args) => {
     log('info', ...args);
+    log(chalk.bgCyan.white('[MOCK]INFO'), ...args);
   },
   warn: (...args) => {
-    log('warning', ...args);
+    log(chalk.bgYellowBright.white('[MOCK]WARNING'), ...args);
   },
   error: (...args) => {
-    log('error', ...args);
+    log(chalk.bgRed.white('[MOCK]ERROR'), ...args);
   },
   /** 只有 logLevel=debug 时才打印 */
   debug: (...args) => {
-    const config = CONFIG.config || defaultCfg;
-    if (config.slient || config.logLevel !== 'debug') return;
-    console.log(...args);
+    log(chalk.greenBright.white('[MOCK]DEBUG'), ...args);
   },
   log: (...args) => {
     console.log(...args);
   },
 };
 
-export default CONFIG;
 module.exports = CONFIG;
+export default CONFIG;

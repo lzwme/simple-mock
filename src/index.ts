@@ -1,8 +1,9 @@
 import simpleMock from './simple-mock';
-import { saveApi } from './save-api';
 import utils from './utils';
 import CONFIG from './config';
-import { ContentEncoding } from '../types';
+import { saveApi } from './save-api';
+
+export * from './save-api';
 
 const mockRender = (req, res, filename: string) => {
   const config = CONFIG.renderConfig();
@@ -14,38 +15,25 @@ const mockRender = (req, res, filename: string) => {
   return filename || '';
 };
 
-const SIMPLEMOCK = {
-  render: async (req, res, filename = '') => {
-    filename = mockRender(req, res, filename);
-    if (!filename) return false;
+/** mock http(s) 类型请求初始化 */
+export const render = async (req, res, filename = '') => {
+  filename = mockRender(req, res, filename);
+  if (!filename) return false;
 
-    return await simpleMock.web(req, res, filename);
-  },
-  /** mock websocket 类型请求 */
-  renderWs: async (reqData, client, filename = '') => {
-    filename = mockRender(reqData, client, filename);
-    if (!filename) return false;
-
-    return await simpleMock.ws(reqData, client, filename);
-  },
-  /** 保存 API 返回信息 */
-  saveApi: (req, res, contentEncoding: ContentEncoding, filename = '') => {
-    if (!CONFIG.config) CONFIG.renderConfig();
-    if (!CONFIG.config.isAutoSaveApi) return;
-    filename = utils.getFileName(CONFIG.config, req, res, filename, 'save');
-
-    if (!filename) return;
-
-    return saveApi(req, res, contentEncoding, filename);
-  },
-  /** 保存纯 Data 数据。具体的文件规则需根据 config.customSaveFileName 确定 */
-  saveData: (data, filename = ''): void => {
-    return SIMPLEMOCK.saveApi(data, data, 'decoded', filename);
-  },
-  getConfig: (nocache = true) => {
-    return CONFIG.renderConfig(nocache);
-  },
+  return await simpleMock.web(req, res, filename);
 };
+/** mock websocket 类型请求初始化 */
+export const renderWs = async (reqData, client, filename = '') => {
+  filename = mockRender(reqData, client, filename);
+  if (!filename) return false;
 
-export default SIMPLEMOCK;
-module.exports = SIMPLEMOCK;
+  return await simpleMock.ws(reqData, client, filename);
+};
+/** 保存纯 Data 数据。具体的文件规则需根据 config.customSaveFileName 确定 */
+export const saveData = (data, filename = ''): void => {
+  return saveApi(data, data, 'decoded', filename);
+};
+/** 获取当前的 mock 配置 */
+export const getConfig = (nocache = true) => {
+  return CONFIG.renderConfig(nocache);
+};
