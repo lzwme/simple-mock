@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export default {
+const utilsDir = {
   /**
    * 生成一个深度的目录
    * @param  {String} dir 目录路径
@@ -83,7 +83,7 @@ export default {
       curPath = pathName + '/' + file;
 
       if (fs.statSync(curPath).isDirectory()) {
-        count += this.delDir(curPath, ext);
+        count += utilsDir.delDir(curPath, ext);
       } else if (!(ext instanceof RegExp) || ext.test(curPath)) {
         fs.unlinkSync(curPath);
         count++;
@@ -100,3 +100,5 @@ export default {
     return count;
   },
 };
+
+export default utilsDir;
