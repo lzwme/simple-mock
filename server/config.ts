@@ -25,5 +25,4 @@ const appConfig = {
   isDev: process.env.NODE_ENV === 'development',
 };
 
-module.exports = appConfig;
 export default appConfig;

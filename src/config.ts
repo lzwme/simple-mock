@@ -180,11 +180,15 @@ const getOrCreateDirs = (config: SimpleMockCfgInner) => {
 };
 
 const logLevelList = { debug: 1, info: 2, warning: 3, error: 4 };
-const log = (level, ...args) => {
+const bgType = { debug: 'greenBright', info: 'bgCyan', warning: 'bgYellowBright', error: 'bgRed'};
+
+const log = (level: keyof typeof logLevelList, ...args) => {
   const config = CONFIG.config || defaultCfg;
   if (!logLevelList[level]) level = 'info';
   if (config.slient || logLevelList[config.logLevel] > logLevelList[level]) return;
-  console.log(...args);
+
+  const tip = chalk.white[bgType[level]](`[MOCK]${level}`.toUpperCase());
+  console.log(tip, ...args);
 };
 
 // 导出配置
@@ -212,17 +216,16 @@ const CONFIG = {
   /** log.info */
   info: (...args) => {
     log('info', ...args);
-    log(chalk.bgCyan.white('[MOCK]INFO'), ...args);
   },
   warn: (...args) => {
-    log(chalk.bgYellowBright.white('[MOCK]WARNING'), ...args);
+    log('warning', ...args);
   },
   error: (...args) => {
-    log(chalk.bgRed.white('[MOCK]ERROR'), ...args);
+    log('error', ...args);
   },
   /** 只有 logLevel=debug 时才打印 */
   debug: (...args) => {
-    log(chalk.greenBright.white('[MOCK]DEBUG'), ...args);
+    log('debug', ...args);
   },
   log: (...args) => {
     console.log(...args);

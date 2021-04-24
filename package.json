@@ -31,7 +31,7 @@
   "scripts": {
     "bootstrap": "yarn || npm install",
     "start": "npm run bootstrap && npm run build && npm run serve",
-    "start:dev": "npm run bootstrap && npm run watch",
+    "dev": "npm run bootstrap && npm run watch",
     "serve": "node --max_old_space_size=8192 -r ts-node/register/transpile-only server/www.ts -o",
     "serve:ws": "node --max_old_space_size=8192 --title=WS-PROXY-SERVER -r ts-node/register/transpile-only ws-proxy-server/index.ts -o",
     "build": "run-s clean && run-p build:*",

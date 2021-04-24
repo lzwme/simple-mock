@@ -1,4 +1,5 @@
-const express = require('express');
+import express from 'express';
+
 const router = express.Router();
 const mockData = {
   user: {
@@ -47,4 +48,4 @@ router.all('*', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

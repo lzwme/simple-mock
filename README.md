@@ -77,7 +77,18 @@ app.all('/{api,rest}/**', async function(req, res) {
 
 // 在代理返回时，注入 saveApi 方法
 apiProxy.on('proxyRes', function (proxyRes, req, res) {
-  simpleMock.saveApi(req, res, proxyRes.headers['content-encoding']);
+  const encoding = proxyRes.headers['content-encoding'];
+
+  apiMock.saveApi(req, res, encoding);
+  if (!['gzip', '‘deflate'].includes(encoding)) {
+    const bufs = [];
+
+    proxyRes.on('data', (data) => bufs.push(data));
+    proxyRes.on('end', () => {
+      let body = Buffer.concat(bufs).toString();
+      res.end(body);
+    });
+  }
 });
 
 // 以下为针对 post 请求，代理消费了 stream 的情况

@@ -2,17 +2,17 @@
  * 接口代理配置与mock
  */
 
-const chalk = require('chalk');
-const queryString = require('querystring');
-const httpProxy = require('http-proxy');
+import chalk from 'chalk';
+import queryString from 'querystring';
+import httpProxy from 'http-proxy';
+import appConfig from './config';
 const apiProxy = httpProxy.createProxyServer();
-const appConfig = require('./config');
+import * as apiMock from '../src';
 
 const proxyTarget = `http://localhost:${appConfig.port}/proxy/`;
 
-module.exports = (conf) => {
+export const fnProxy = (conf) => {
   const { app } = conf;
-  const apiMock = require('../dist');
 
   console.log('current proxyTarget: ', proxyTarget);
 
@@ -34,8 +34,9 @@ module.exports = (conf) => {
   apiProxy.on('proxyRes', (proxyRes, req, res) => {
     // 针对 content-encoding 为 gzip/deflate 压缩的情况，其他其他格式请自行解码返回内容
     const encoding = proxyRes.headers['content-encoding'];
+
     if (['gzip', '‘deflate'].includes(encoding)) {
-      apiMock.saveApi(req, proxyRes, encoding);
+      apiMock.saveApi(req, res, encoding);
     } else {
       const bufs = [];
 

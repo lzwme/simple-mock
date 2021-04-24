@@ -2,7 +2,8 @@ import proxyOnUpgrade from './ws';
 import http from 'http';
 import chalk from 'chalk';
 import appConfig from './config';
-const app = require('./app');
+import app from './app';
+
 app.set('port', appConfig.port);
 
 const server = http.createServer(app);
