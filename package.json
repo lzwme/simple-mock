@@ -31,8 +31,9 @@
   "scripts": {
     "bootstrap": "yarn || npm install",
     "start": "npm run bootstrap && npm run build && npm run serve",
-    "dev": "npm run bootstrap && npm run watch",
-    "serve": "node --max_old_space_size=8192 -r ts-node/register/transpile-only server/www.ts -o",
+    "dev": "run-s bootstrap watch serve",
+    "serve": "run-s serve:*",
+    "serve:www": "node --max_old_space_size=8192 -r ts-node/register/transpile-only server/www.ts -o",
     "serve:ws": "node --max_old_space_size=8192 --title=WS-PROXY-SERVER -r ts-node/register/transpile-only ws-proxy-server/index.ts -o",
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",
@@ -55,8 +56,7 @@
   },
   "dependencies": {
     "chalk": "*",
-    "concat-stream": "^2.0.0",
-    "ts-node": "*"
+    "concat-stream": "^2.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
@@ -79,6 +79,7 @@
     "prettier": "^2.2.1",
     "standard-version": "^9.1.0",
     "trash-cli": "^4.0.0",
+    "ts-node": "*",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.1.3",
