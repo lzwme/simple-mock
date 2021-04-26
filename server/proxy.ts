@@ -43,7 +43,7 @@ export const fnProxy = (conf) => {
       proxyRes.on('data', (data) => bufs.push(data));
       proxyRes.on('end', () => {
         let body = Buffer.concat(bufs).toString();
-        res.end(body);
+        res.end();
 
         try {
           body = JSON.parse(body);

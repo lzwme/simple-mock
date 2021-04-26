@@ -14,17 +14,45 @@ import { ContentEncoding } from '../types';
  */
 const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) => {
   // res 已经是解码的内容了
-  if (contentEncoding === 'decoded') {
+  if (contentEncoding === 'decoded' || !res.write) {
+    if (!res.write) CONFIG.error('error response info:', res);
     if (callback) callback(res);
+    return;
+  }
+
+  // 用于在修改内容后回调执行
+  const _write = res.write;
+  const _end = res.end;
+
+  if (!contentEncoding) {
+    const chunks = [];
+
+    res.write = (chunk) => {
+      _write.call(res, chunk);
+      chunks.push(chunk);
+    };
+    res.end = (data) => {
+      if (data) chunks.push(data);
+      let body = Buffer.from(chunks.join(''));
+
+      if (callback) {
+        try {
+          body = JSON.parse(body.toString());
+        } catch (e) {
+          CONFIG.info(chalk.redBright('JSON.parse error:'), e);
+        }
+
+        body = callback(body);
+        body = Buffer.from(JSON.stringify(body));
+      }
+
+      _end.call(res, data);
+    };
     return;
   }
 
   let unzip;
   let zip;
-
-  // 用于在修改内容后回调执行
-  const _write = res.write;
-  const _end = res.end;
 
   // 只处理 content-encoding 为 gizp 和 deflate 的
   if (contentEncoding && contentEncoding.includes('gzip')) {
@@ -34,38 +62,10 @@ const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) =>
     unzip = zlib.createInflate();
     zip = zlib.createDeflate();
   } else {
-    try {
-      const chunks = [];
-
-      res.write = (chunk) => {
-        _write.call(res, chunk);
-        chunks.push(chunk);
-      };
-      res.end = (data) => {
-        if (data) chunks.push(data);
-        let body = Buffer.from(chunks.join(''));
-
-        if (callback) {
-          try {
-            body = JSON.parse(body.toString());
-          } catch (e) {
-            CONFIG.info(chalk.redBright('JSON.parse error:'), e);
-          }
-
-          body = callback(body);
-          body = Buffer.from(JSON.stringify(body));
-        }
-
-        _end.call(res, body);
-      };
-    } catch (err) {
-      CONFIG.log(err);
-    }
-    // CONFIG.log(chalk.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
+    CONFIG.log(chalk.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
     return;
   }
 
-  if (!unzip) return;
   unzip.on('error', (e) => {
     CONFIG.log('Unzip error: ', e);
     _end.call(res);

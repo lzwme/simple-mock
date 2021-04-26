@@ -180,14 +180,14 @@ const getOrCreateDirs = (config: SimpleMockCfgInner) => {
 };
 
 const logLevelList = { debug: 1, info: 2, warning: 3, error: 4 };
-const bgType = { debug: 'greenBright', info: 'bgCyan', warning: 'bgYellowBright', error: 'bgRed'};
+const bgType = { debug: 'greenBright', info: 'bgCyan', warning: 'bgYellowBright', error: 'bgRed' };
 
 const log = (level: keyof typeof logLevelList, ...args) => {
   const config = CONFIG.config || defaultCfg;
   if (!logLevelList[level]) level = 'info';
   if (config.slient || logLevelList[config.logLevel] > logLevelList[level]) return;
 
-  const tip = chalk.white[bgType[level]](`[MOCK]${level}`.toUpperCase());
+  const tip = chalk.white[bgType[level]](`${level}`.toUpperCase());
   console.log(tip, ...args);
 };
 
