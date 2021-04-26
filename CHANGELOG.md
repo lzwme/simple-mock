@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/lzwme/simple-mock/compare/v1.4.1...v1.4.2) (2021-04-26)
+
+
+### Bug Fixes
+
+* 修正 content-encoding 入参为 decoded 时会打印 error 的问题 ([d42f8c2](https://github.com/lzwme/simple-mock/commit/d42f8c24afa6edc452b40510cf820743f2220e3e))
+
 ### [1.4.1](https://github.com/lzwme/simple-mock/compare/v1.4.0...v1.4.1) (2021-04-26)
 
 
