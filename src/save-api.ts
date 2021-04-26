@@ -15,7 +15,7 @@ import { ContentEncoding } from '../types';
 const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) => {
   // res 已经是解码的内容了
   if (contentEncoding === 'decoded' || !res.write) {
-    if (!res.write) CONFIG.error('error response info:', res);
+    if (!res.write && contentEncoding !== 'decoded') CONFIG.error('error response info:', res);
     if (callback) callback(res);
     return;
   }
