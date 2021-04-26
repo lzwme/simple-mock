@@ -1,15 +1,17 @@
 /*
  * @Author: gflizhiwen
  * @Date: 2019-06-28 08:13:41
- * @LastEditors: gflizhiwen
- * @LastEditTime: 2019-10-21 16:42:50
+ * @LastEditors: lzw
+ * @LastEditTime: 2021-04-26 16:00:57
  * @Description: Git 提交规范 commitlint 校验配置
  * {@link http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html | 提交规范说明参考}
  */
 
 'use strict';
-const message = process.env['HUSKY_GIT_PARAMS'];
+
 const fs = require('fs');
+const argv = require('yargs').argv;
+const gitMsgPath = argv.edit || process.env['HUSKY_GIT_PARAMS'] || '.git/COMMIT_EDITMSG';
 
 const types = [
   'build', // 构建执行
@@ -40,8 +42,8 @@ function parseMessage(message) {
   };
 }
 
-function getScopesRule() {
-  const messages = fs.readFileSync(message, { encoding: 'utf-8' });
+function getScopesRule(a, b, c) {
+  const messages = fs.readFileSync(gitMsgPath, { encoding: 'utf-8' });
   const parsed = parseMessage(messages.split('\n')[0]);
   if (!parsed) {
     return [2, 'always', scopes];
