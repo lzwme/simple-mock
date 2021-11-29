@@ -2,7 +2,7 @@ server
 ws-proxy-server
 mock
 .gitignore
-.eslintrc
+.eslintrc*
 index.html
 _config.yml
 yarn.lock
@@ -12,9 +12,8 @@ simple-mock-config.**
 
 src
 test
-tsconfig.json
-tsconfig.module.json
-tsconfig.node.json
+tslint.*
+tsconfig.*
 .travis.yml
 .gitlab-ci.yml
 .circleci/*
@@ -35,4 +34,3 @@ pnpm-lock.yaml
 .grs.config.js
 .husky
 .lintstagedrc
-CHANGELOG.md
