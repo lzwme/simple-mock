@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/lzwme/simple-mock/compare/v1.4.2...v1.5.0) (2021-11-29)
+
+
+### Features
+
+* 移除 chalk 依赖，改用自定义的 color 实现 ([b6292db](https://github.com/lzwme/simple-mock/commit/b6292dbd6424dc51eb18967e12e9b103006b75c4))
+
+
+### Bug Fixes
+
+* ts-node 应为开发模式下依赖 ([4f97fea](https://github.com/lzwme/simple-mock/commit/4f97fea0a8b3f9d4afd63e72a35b4f3fc9ebce91))
+
 ### [1.4.2](https://github.com/lzwme/simple-mock/compare/v1.4.1...v1.4.2) (2021-04-26)
 
 
