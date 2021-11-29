@@ -15,7 +15,6 @@ test
 tsconfig.json
 tsconfig.module.json
 tsconfig.node.json
-tslint.json
 .travis.yml
 .gitlab-ci.yml
 .circleci/*

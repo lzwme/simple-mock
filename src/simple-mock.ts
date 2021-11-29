@@ -3,13 +3,13 @@ import { color } from 'console-log-colors';
 import { CONFIG, logger } from './config';
 import fs from 'fs';
 
-const mockFileMTimes: any = {};
+const mockFileMTimes: { [absolutePath: string]: number } = {};
 
 /**
  * 尝试根据 req 请求 pathname 获取指定类型的 mock 文件内容
  * @param {string} type 取值为 autosave、customdata 或 mockdata
  */
-function tryGetContentInfo(filename, type) {
+function tryGetContentInfo(filename: string, type: 'autosave' | 'customdata' | 'mockdata') {
   let absolutePath = utils.getDataFilePath(filename, type);
 
   if (!utils.isExists(absolutePath)) {
@@ -32,7 +32,7 @@ function tryGetContentInfo(filename, type) {
       delete require.cache[absolutePath];
     }
 
-    const content: any = require(absolutePath);
+    const content = require(absolutePath);
 
     return { content, absolutePath };
   } catch (err) {

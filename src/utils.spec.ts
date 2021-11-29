@@ -1,6 +1,6 @@
-// tslint:disable:no-expression-statement
 import test from 'ava';
 import fs from 'fs';
+import path from 'path';
 import utils from './utils';
 import utilsDir from './utils-dir';
 // import path from 'path';
@@ -13,6 +13,9 @@ test('utils.getDataFilePath', (t) => {
   t.is(p.includes('customdata'), true);
 
   p = utils.getDataFilePath('abc');
+  t.is(p.includes('mockdata'), true);
+
+  p = utils.getDataFilePath('');
   t.is(p.includes('mockdata'), true);
 });
 
@@ -47,13 +50,35 @@ test('utils.getFileName', (t) => {
     null
   );
   t.is(r, 'abc');
+
+  const mockReqs = [{ pathname: 'abc' }, { _parsedUrl: { pathname: 'abc' } }, { url: 'abc?t=1' }];
+
+  mockReqs.forEach((req) => {
+    r = utils.getFileName({}, req, null, null, null);
+    t.is(r, 'abc');
+  });
 });
 
 test('utilsDir', (t) => {
   const dirName = './test/abc';
 
+  // 创建目录
   utilsDir.mkDir(dirName);
   t.is(fs.existsSync(dirName), true);
-  utilsDir.delDir(dirName);
+
+  fs.writeFileSync(path.resolve(dirName, 'test.test'), 'test');
+  fs.writeFileSync(path.resolve(dirName, 'test.txt'), 'test');
+
+  // 按后缀名称删除
+  utilsDir.delDir(dirName, '.test');
+
+  // 支持删除一个文件
+  t.is(utilsDir.delDir(path.resolve(dirName, 'test.txt')), 1);
+
+  // 全部删除
+  t.is(utilsDir.delDir(dirName), 0);
   t.is(fs.existsSync(dirName), false);
+
+  // 删除不存在的目录
+  t.is(utilsDir.delDir(dirName), 0);
 });

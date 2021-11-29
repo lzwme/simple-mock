@@ -1,4 +1,4 @@
 {
-  "*.ts": ["prettier --parser typescript --write", "tslint -c tslint.json --fix"],
+  "*.ts": ["prettier --parser typescript --write", "eslint src --ext .ts --fix"],
   "*.json": ["prettier --parser json --write"]
 }

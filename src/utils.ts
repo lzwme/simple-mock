@@ -6,7 +6,7 @@ import { CONFIG } from './config';
 
 const utils = {
   /** 取得mock文件的路径 */
-  getDataFilePath: (pathname: string, type?: 'autosave' | 'customdata') => {
+  getDataFilePath: (pathname: string, type: 'autosave' | 'customdata' | 'mockdata' = 'mockdata') => {
     const config: SimpleMockCfgInner = CONFIG.renderConfig(false);
     let realDir: string;
 
@@ -38,8 +38,6 @@ const utils = {
       // console.log('支持 typescript');
       return true;
     } catch {
-      console.log('不支持 typescript');
-
       return false;
     }
   },

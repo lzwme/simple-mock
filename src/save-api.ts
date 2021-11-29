@@ -41,14 +41,14 @@ const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) =>
         try {
           body = JSON.parse(body.toString());
         } catch (e) {
-          logger.info(color.redBright('JSON.parse error:'), e);
+          logger.debug(color.redBright('JSON.parse error:'), e);
         }
 
         body = callback(body);
         body = Buffer.from(JSON.stringify(body));
       }
 
-      _end.call(res, data);
+      _end.call(res, body);
     };
     return;
   }

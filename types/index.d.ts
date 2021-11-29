@@ -59,7 +59,7 @@ export interface SimpleMockReq extends IncomingMessage, PlainObject {
 }
 
 export interface SimpleMockRes extends ServerResponse, PlainObject {
-  req?: SimpleMockReq;
+  req: SimpleMockReq;
   send?: (body: any) => SimpleMockRes;
   status?: (code: number) => SimpleMockRes;
 }
