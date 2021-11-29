@@ -32,3 +32,8 @@ commitlint.config.js
 .editorconfig
 publish.bat
 .yarnrc
+pnpm-lock.yaml
+.grs.config.js
+.husky
+.lintstagedrc
+CHANGELOG.md

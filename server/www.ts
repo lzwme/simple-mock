@@ -1,6 +1,6 @@
 import proxyOnUpgrade from './ws';
 import http from 'http';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import appConfig from './config';
 import app from './app';
 
@@ -45,7 +45,7 @@ function onListening() {
   // const addr = server.address();
   // console.log(addr);
   // const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  console.log('HTTP SERVER LISTENING ON', chalk.yellowBright(appConfig.port));
+  console.log('HTTP SERVER LISTENING ON', color.yellowBright(appConfig.port));
 
   if (process.argv.includes('-o') || process.argv.includes('--open')) {
     const cmd = process.platform === 'win32' ? 'start' : 'open';

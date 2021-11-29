@@ -2,11 +2,16 @@ import { SimpleMockConfig, SimpleMockCfgInner } from '../types';
 
 import fs from 'fs';
 import path from 'path';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import utilDir from './utils-dir';
+import { Logger } from './Logger';
+
+export const logger = Logger.getLogger('[SIMPLE-MOCK]');
+
+const { bold, green, yellow, cyan } = color;
 const cwd = process.env.PROJECT_CWD || process.cwd();
 const defaultCfg: SimpleMockCfgInner = {
-  slient: false,
+  silent: false,
   logLevel: 'info',
   mockFileDir: 'mock',
   isEnableMock: false,
@@ -52,7 +57,7 @@ const getConfigFromFile = () => {
   }
 
   if (!fs.existsSync(cfgFile)) {
-    CONFIG.info(chalk.green.bold(`\n[INFO] 尝试创建[simple-mock]配置文件：`), chalk.yellow.bold(cfgFile));
+    logger.info(green(bold(`\n[INFO] 尝试创建[simple-mock]配置文件：`)), yellow(bold(cfgFile)));
     let cfgExampleContent = fs.readFileSync(cfgExampleFile, { encoding: 'utf8' });
 
     if (cfgFile.endsWith('.ts') && fs.existsSync(path.resolve(__dirname, '../package.json'))) {
@@ -70,7 +75,7 @@ const getConfigFromFile = () => {
     if (fs.existsSync(gitignoreFile)) {
       const gitignoreContent = fs.readFileSync(gitignoreFile, 'utf8') + '';
       if (!gitignoreContent.includes('simple-mock-config.*')) {
-        CONFIG.info(chalk.yellow.bold('[INFO] 将 simple-mock 配置文件规则写入到 .gitignore'));
+        logger.info(yellow(bold('[INFO] 将 simple-mock 配置文件规则写入到 .gitignore')));
         fs.appendFileSync(gitignoreFile, '\nsimple-mock-config.*', 'utf-8');
       }
     }
@@ -81,7 +86,7 @@ const getConfigFromFile = () => {
     const cfgFileStat = fs.statSync(cfgFile);
 
     if (defaultCfg._configFileMdDate && defaultCfg._configFileMdDate !== cfgFileStat.mtimeMs) {
-      CONFIG.info(chalk.green.bold(`\n[INFO] 检测到[simple-mock]配置文件有更新：`), chalk.yellow.bold(cfgFile));
+      logger.info(green(bold(`\n[INFO] 检测到[simple-mock]配置文件有更新：`)), yellow(bold(cfgFile)));
       delete require.cache[cfgFile];
       CONFIG.config = null;
     }
@@ -91,13 +96,13 @@ const getConfigFromFile = () => {
       const tsNode = require('ts-node');
       if (!process[tsNode.REGISTER_INSTANCE]) {
         tsNode.register(CONFIG.tsNodeOptions);
-        CONFIG.info('Load ts-node for config file');
+        logger.info('Load ts-node for config file');
       }
     }
 
     config = require(cfgFile);
   } catch (err) {
-    CONFIG.log(chalk.yellow('[WARNING] Not find config file of simple-mock-config.js: '), cfgFile, err);
+    logger.log(yellow('[WARNING] Not find config file of simple-mock-config.js: '), cfgFile, err);
   }
 
   config = Object.assign({}, defaultCfg, config);
@@ -179,20 +184,8 @@ const getOrCreateDirs = (config: SimpleMockCfgInner) => {
   return config;
 };
 
-const logLevelList = { debug: 1, info: 2, warning: 3, error: 4 };
-const bgType = { debug: 'greenBright', info: 'bgCyan', warning: 'bgYellowBright', error: 'bgRed' };
-
-const log = (level: keyof typeof logLevelList, ...args) => {
-  const config = CONFIG.config || defaultCfg;
-  if (!logLevelList[level]) level = 'info';
-  if (config.slient || logLevelList[config.logLevel] > logLevelList[level]) return;
-
-  const tip = chalk.white[bgType[level]](`${level}`.toUpperCase());
-  console.log(tip, ...args);
-};
-
 // 导出配置
-const CONFIG = {
+export const CONFIG = {
   config: null as SimpleMockConfig, // this.renderConfig(),
   renderConfig: (nocache = true) => {
     if (!nocache && CONFIG.config) return CONFIG.config;
@@ -201,10 +194,12 @@ const CONFIG = {
     config = getConfigFromEnv(config);
     config = getOrCreateDirs(config);
 
+    logger.setLevel(config.silent ? 'silent' : config.logLevel);
+    logger.showTime = config.logShowTime !== false;
+
     if (!CONFIG.config) {
-      CONFIG.info(
-        chalk.green(`\n[SIMPLE-MOCK]`),
-        chalk.cyan(`isEnableMock=${config.isEnableMock}, isAutoSaveApi=${config.isAutoSaveApi}, isForceSaveApi=${config.isForceSaveApi}`)
+      logger.info(
+        cyan(`isEnableMock=${config.isEnableMock}, isAutoSaveApi=${config.isAutoSaveApi}, isForceSaveApi=${config.isForceSaveApi}`)
       );
     }
 
@@ -213,24 +208,4 @@ const CONFIG = {
     return config as SimpleMockConfig;
   },
   tsNodeOptions,
-  /** log.info */
-  info: (...args) => {
-    log('info', ...args);
-  },
-  warn: (...args) => {
-    log('warning', ...args);
-  },
-  error: (...args) => {
-    log('error', ...args);
-  },
-  /** 只有 logLevel=debug 时才打印 */
-  debug: (...args) => {
-    log('debug', ...args);
-  },
-  log: (...args) => {
-    console.log(...args);
-  },
 };
-
-module.exports = CONFIG;
-export default CONFIG;

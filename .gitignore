@@ -43,3 +43,5 @@ src/**.js
 .idea/*
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
+.grs.config.js

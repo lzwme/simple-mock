@@ -1,6 +1,6 @@
 import simpleMock from './simple-mock';
 import utils from './utils';
-import CONFIG from './config';
+import { CONFIG } from './config';
 import { saveApi } from './save-api';
 
 export * from './save-api';

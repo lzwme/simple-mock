@@ -50,7 +50,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "chalk": "*",
+    "console-log-colors": "^0.2.2",
     "concat-stream": "^2.0.0"
   },
   "devDependencies": {

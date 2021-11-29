@@ -1,6 +1,6 @@
 import utils from './utils';
-import chalk from 'chalk';
-import CONFIG from './config';
+import { color } from 'console-log-colors';
+import { CONFIG, logger } from './config';
 import fs from 'fs';
 
 const mockFileMTimes: any = {};
@@ -20,7 +20,7 @@ function tryGetContentInfo(filename, type) {
     const tsNode = require('ts-node');
     if (!process[tsNode.REGISTER_INSTANCE]) {
       tsNode.register(CONFIG.tsNodeOptions);
-      CONFIG.debug('Load ts-node for api mock file');
+      logger.debug('Load ts-node for api mock file');
     }
   }
 
@@ -36,7 +36,7 @@ function tryGetContentInfo(filename, type) {
 
     return { content, absolutePath };
   } catch (err) {
-    CONFIG.error(chalk.bold.red('[TRY MOCK ERROR]: '), filename, err);
+    logger.error(color.red('[TRY MOCK ERROR]: '), filename, err);
     return false;
   }
 }
@@ -65,7 +65,7 @@ async function getContent(req, res, filename) {
         absolutePath: 'university mock by config.onNotHitMockFile',
       };
     } else {
-      CONFIG.warn(chalk.red('FILE NOT EXISTS: '), filename);
+      logger.warn(color.red('FILE NOT EXISTS: '), filename);
     }
   }
 
@@ -82,7 +82,7 @@ async function getContent(req, res, filename) {
 
     // 取消 mock 的情况
     if ([void 0, null, '__ignore_mock__'].includes(contentInfo.content)) {
-      CONFIG.warn(chalk.blue('[IGNORE MOCK]'), filename);
+      logger.warn(color.blue('[IGNORE MOCK]'), filename);
       return false;
     }
   }
@@ -98,18 +98,18 @@ const mock = {
    * @param {string} filename 针对本次请求的本地 mock 文件名
    */
   async web(req, res, filename: string) {
-    // CONFIG.debug('simplemock fro http');
+    // logger.debug('simplemock fro http');
     const contentInfo = await getContent(req, res, filename);
     if (!contentInfo) return false;
 
     const { absolutePath, content } = contentInfo;
 
-    CONFIG.info(chalk.green('[mockAPI]'), (req && req.url) || '', chalk.yellow(absolutePath));
+    logger.info(color.green('[mockAPI]'), (req && req.url) || '', color.yellow(absolutePath));
 
     if (req && req.url && res) {
       // 在 mock 规则文件内已经在 content 方法中处理了（已执行了 res.send），则返回 true
       if (req && res.headersSent) {
-        CONFIG.info(chalk.green('[mockAPI] CUSTOM SENDED FOR'), req.url, absolutePath);
+        logger.info(color.green('[mockAPI] CUSTOM SENDED FOR'), req.url, absolutePath);
         return true;
       }
 
@@ -128,13 +128,13 @@ const mock = {
    * @param {string} filename 针对本次 reqData 请求的本地 mock 文件名
    */
   async ws(reqData, client, filename: string) {
-    // CONFIG.debug('simplemockWs');
+    // logger.debug('simplemockWs');
     const contentInfo = await getContent(reqData, client, filename);
     if (!contentInfo) return false;
 
     const { absolutePath, content } = contentInfo;
 
-    CONFIG.info(chalk.green('[mockAPI]'), chalk.yellow(absolutePath));
+    logger.info(color.green('[ws][mockAPI]'), color.yellow(absolutePath));
 
     return content;
   },

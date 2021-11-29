@@ -9,9 +9,11 @@ export interface PlainObject {
  */
 export interface SimpleMockConfig {
   /** 是否为静默模式，不打印日志信息。默认 false */
-  slient?: boolean;
-  /** 打印日志的级别。当 slient 为 false 时有效，默认为 info */
-  logLevel?: 'debug' | 'info' | 'warning' | 'error';
+  silent?: boolean;
+  /** 打印日志的级别。当 silent 为 false 时有效，默认为 info */
+  logLevel?: 'debug' | 'log' | 'info' | 'warning' | 'error';
+  /** 打印日志时，是否显示当前时间。默认 true */
+  logShowTime?: boolean;
   /** 指定 mock 文件存放的目录，默认为 mock。注意：应当在 .gitignore 文件中忽略该目录 */
   mockFileDir?: string;
   /** 是否开启 Mock API 功能。默认为 false */

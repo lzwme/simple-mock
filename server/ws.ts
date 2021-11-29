@@ -1,7 +1,7 @@
 import utils from '../ws-proxy-server/utils';
 import { IncomingMessage } from 'http';
 import { Socket } from 'net';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import WebSocketServer from 'ws/lib/websocket-server';
 
 const wsServer = new WebSocketServer({ noServer: true } as any, () => {});
@@ -12,7 +12,7 @@ const proxyOnUpgrade = (server) => {
       ws.on('message', async (data) => {
         try {
           const reqParms = utils.parseData(data);
-          console.log(chalk.bgGreen('WS CLIENT REQUEST:'), utils.getSliceData(reqParms));
+          console.log(color.bgGreen('WS CLIENT REQUEST:'), utils.getSliceData(reqParms));
 
           const mockData = {
             topic: 'sync_answer',
@@ -24,7 +24,7 @@ const proxyOnUpgrade = (server) => {
           };
           ws.send(JSON.stringify(mockData));
         } catch (err) {
-          console.log(chalk.bgRedBright('HANDLEUPGRADE ERROR'), err);
+          console.log(color.bgRedBright('HANDLEUPGRADE ERROR'), err);
         }
       });
       ws.on('open', () => {

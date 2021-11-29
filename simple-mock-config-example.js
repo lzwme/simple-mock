@@ -9,7 +9,7 @@ module.exports = {
   isEnableMock: false,
   isAutoSaveApi: true,
   isForceSaveApi: false,
-  // slient: false,
+  // silent: false,
   // logLevel: 'info',
   // fnAutosaveFilter(content, filePath, req, res) {
   //   // 示例： 不保存 content.data.length = 0 的数据

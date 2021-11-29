@@ -9,7 +9,7 @@ import Extensions from 'ws/lib/extension';
 import PerMessageDeflate from 'ws/lib/permessage-deflate';
 import { Socket } from 'net';
 import httpProxy from 'http-proxy';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import config from './config';
 import utils from './utils';
 import { getDecodedData } from './decode-data';
@@ -38,7 +38,7 @@ const wsMockbroadcast = (data) => {
 const receiverWsReq = (req, socket: Socket, head) => {
   if (!config.useWsReceiver) {
     socket.on('data', (data) => {
-      log.info(chalk.bgGreen('CLIENT REQUEST'), '...'); // , data.toString().slice(0, 50));
+      log.info(color.bgGreen('CLIENT REQUEST'), '...'); // , data.toString().slice(0, 50));
     });
     return;
   }
@@ -54,7 +54,7 @@ const receiverWsReq = (req, socket: Socket, head) => {
 
   socket.on('data', (data: Buffer) => {
     receiver.write(data, null, (err) => {
-      if (err) log.debug(chalk.bgGreen('RECEIVER ERR'), err);
+      if (err) log.debug(color.bgGreen('RECEIVER ERR'), err);
     });
   });
   socket.on('close', () => {
@@ -65,7 +65,7 @@ const receiverWsReq = (req, socket: Socket, head) => {
 
   receiver.on('message', (data) => {
     const result = data instanceof ArrayBuffer ? getDecodedData(data) : utils.parseData(data);
-    log.info(chalk.bgGreen('CLIENT REQUEST:'), utils.getSliceData(result));
+    log.info(color.bgGreen('CLIENT REQUEST:'), utils.getSliceData(result));
   });
 };
 
@@ -85,7 +85,7 @@ export const proxyOnUpgrade = (req: IncomingMessage, socket: Socket, head: Buffe
     ws.on('message', async (data) => {
       try {
         const reqParms = utils.parseData(data);
-        log.info(chalk.bgGreen('WS REQUEST:'), utils.getSliceData(reqParms));
+        log.info(color.bgGreen('WS REQUEST:'), utils.getSliceData(reqParms));
 
         const filename = utils.customSaveFileName(reqParms, null, null, 'mock');
         let mockData = await simpleMock.renderWs(
@@ -99,7 +99,7 @@ export const proxyOnUpgrade = (req: IncomingMessage, socket: Socket, head: Buffe
 
         if (mockData) {
           mockData = utils.handlerBeforeMockSend(mockData, null, reqParms);
-          log.info(chalk.bgBlue('WS MOCK RESPONSE'), utils.getSliceData(mockData));
+          log.info(color.bgBlue('WS MOCK RESPONSE'), utils.getSliceData(mockData));
 
           if (config.isBroadcast) {
             wsMockbroadcast(mockData);
@@ -108,7 +108,7 @@ export const proxyOnUpgrade = (req: IncomingMessage, socket: Socket, head: Buffe
           }
         }
       } catch (err) {
-        log.log(chalk.bgRedBright('handleUpgrade error'), err);
+        log.log(color.bgRedBright('handleUpgrade error'), err);
       }
     });
     ws.on('close', () => {
@@ -120,7 +120,7 @@ export const proxyOnUpgrade = (req: IncomingMessage, socket: Socket, head: Buffe
 
 proxy.on('proxyReqWs', (proxyReq: ClientRequest, req: IncomingMessage, socket: Socket, options, head: Buffer) => {
   proxyReq.on('upgrade', (proxyRes: IncomingMessage, proxySocket: Socket, proxyHead: Buffer) => {
-    log.info(chalk.bgMagenta('\n PROXY ON: '), proxySocket.remoteAddress + ':' + proxySocket.remotePort);
+    log.info(color.bgMagenta('\n PROXY ON: '), proxySocket.remoteAddress + ':' + proxySocket.remotePort);
 
     const extensions = {};
     const perMessageDeflate = new PerMessageDeflate({ threshold: 10240 } as any, false, 0);
@@ -144,14 +144,14 @@ proxy.on('proxyReqWs', (proxyReq: ClientRequest, req: IncomingMessage, socket: S
     receiver.on('message', (data) => {
       try {
         const result = data instanceof ArrayBuffer ? getDecodedData(data) : utils.parseData(data);
-        log.info(chalk.bgBlue('WS PROXY RESPONSE'), utils.getSliceData(result));
+        log.info(color.bgBlue('WS PROXY RESPONSE'), utils.getSliceData(result));
         if (result.data) result.data = utils.parseData(result.data);
         // 默认的文件名
         const filename = utils.customSaveFileName(result, null, null, 'mock');
         // 自动保存 API 返回内容
         simpleMock.saveData(result, filename);
       } catch (err) {
-        log.debug(chalk.bgRedBright('WS PROXY RESPONSE'), data);
+        log.debug(color.bgRedBright('WS PROXY RESPONSE'), data);
         log.log('parse err:', err);
       }
     });

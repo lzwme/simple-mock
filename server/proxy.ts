@@ -2,7 +2,7 @@
  * 接口代理配置与mock
  */
 
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import queryString from 'querystring';
 import httpProxy from 'http-proxy';
 import appConfig from './config';
@@ -23,7 +23,7 @@ export const fnProxy = (conf) => {
         return;
       }
 
-      console.log(chalk.cyan('[apiProxy]'), req._parsedUrl.pathname, '\t', chalk.yellow(urlReg));
+      console.log(color.cyan('[apiProxy]'), req._parsedUrl.pathname, '\t', color.yellow(urlReg));
       apiProxy.web(req, res, {
         target: proxyTarget,
         selfHandleResponse: true,
@@ -48,7 +48,7 @@ export const fnProxy = (conf) => {
         try {
           body = JSON.parse(body);
         } catch (err) {}
-        console.log(chalk.bgBlueBright('PROXYRES CONTENT: '), body);
+        console.log(color.bgBlueBright('PROXYRES CONTENT: '), body);
         apiMock.saveApi(req, body, 'decoded');
       });
     }

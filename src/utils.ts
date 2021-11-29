@@ -2,7 +2,7 @@ import { SimpleMockCfgInner } from '../types';
 
 import fs from 'fs';
 import path from 'path';
-import CONFIG from './config';
+import { CONFIG } from './config';
 
 const utils = {
   /** 取得mock文件的路径 */

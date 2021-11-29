@@ -4,7 +4,7 @@
 
 import url from 'url';
 import http from 'http';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import fs from 'fs';
 import path from 'path';
 import WebSocketServer from 'ws/lib/websocket-server';
@@ -81,7 +81,7 @@ class MockClient {
         if (data && data.type === 'mock') {
           if (typeof data.data !== 'string') data.data = JSON.stringify(data.data);
 
-          log.log(chalk.bgBlueBright('TRY SEND CLIENT MOCK MSG:'), utils.getSliceData(data.data));
+          log.log(color.bgBlueBright('TRY SEND CLIENT MOCK MSG:'), utils.getSliceData(data.data));
           this.proxyWsServer.clients.forEach((proxyClient) => {
             if (proxyClient.readyState === proxyClient.OPEN) {
               proxyClient.send(data.data);
@@ -100,7 +100,7 @@ class MockClient {
 
     const port = config.mockClient.port;
     clientServer.listen(port, () => {
-      log.log('MOCK CLIENT SERVER LISTEN ON', chalk.greenBright(port));
+      log.log('MOCK CLIENT SERVER LISTEN ON', color.greenBright(port));
 
       if (config.mockClient.isOpenPage) {
         try {

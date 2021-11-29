@@ -1,10 +1,12 @@
 import fs from 'fs';
 import zlib from 'zlib';
 import concatStream from 'concat-stream';
-import chalk from 'chalk';
+import { color } from 'console-log-colors';
 import utils from './utils';
-import CONFIG from './config';
+import { CONFIG, logger } from './config';
 import { ContentEncoding } from '../types';
+
+const { bold, yellow, red } = color;
 
 /**
  * 从 Response 流中取得发送的内容（可修改API内容）
@@ -15,7 +17,7 @@ import { ContentEncoding } from '../types';
 const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) => {
   // res 已经是解码的内容了
   if (contentEncoding === 'decoded' || !res.write) {
-    if (!res.write && contentEncoding !== 'decoded') CONFIG.error('error response info:', res);
+    if (!res.write && contentEncoding !== 'decoded') logger.error('error response info:', res);
     if (callback) callback(res);
     return;
   }
@@ -39,7 +41,7 @@ const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) =>
         try {
           body = JSON.parse(body.toString());
         } catch (e) {
-          CONFIG.info(chalk.redBright('JSON.parse error:'), e);
+          logger.info(color.redBright('JSON.parse error:'), e);
         }
 
         body = callback(body);
@@ -62,12 +64,12 @@ const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) =>
     unzip = zlib.createInflate();
     zip = zlib.createDeflate();
   } else {
-    CONFIG.log(chalk.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
+    logger.log(color.yellowBright('NOT SUPPORTED CONTENT-ENCODING: '), contentEncoding);
     return;
   }
 
   unzip.on('error', (e) => {
-    CONFIG.log('Unzip error: ', e);
+    logger.log('Unzip error: ', e);
     _end.call(res);
   });
 
@@ -87,7 +89,7 @@ const getBodyFromResponse = (res, contentEncoding: ContentEncoding, callback) =>
       body = JSON.parse(data.toString());
     } catch (e) {
       body = data.toString();
-      CONFIG.info('JSON.parse error:', e);
+      logger.info('JSON.parse error:', e);
     }
 
     // 执行修改请求内容的回调方法
@@ -119,7 +121,7 @@ const onDecodeResponse = (content, absolutePath, req, res) => {
     let contentCopy = JSON.parse(contentStr);
 
     if (typeof config.fnAutosaveFilter === 'function' && !config.fnAutosaveFilter(contentCopy, absolutePath, req, res)) {
-      CONFIG.info(chalk.yellow('[saveApi] API 返回内容不符合 config.fnAutosaveFilter 过滤规则，不保存本次获取的内容'), absolutePath);
+      logger.info(color.yellow('[saveApi] API 返回内容不符合 config.fnAutosaveFilter 过滤规则，不保存本次获取的内容'), absolutePath);
 
       return content;
     }
@@ -132,11 +134,11 @@ const onDecodeResponse = (content, absolutePath, req, res) => {
 
     if (!contentStr) return;
 
-    CONFIG.info(chalk.bold.yellow('[saveApi] 自动保存内容'), absolutePath);
+    logger.info(bold(yellow('[saveApi] 自动保存内容')), absolutePath);
     fs.writeFileSync(absolutePath, `module.exports = ${contentStr}`);
   } catch (err) {
-    CONFIG.log(chalk.red.bold('[saveApi] 尝试写入文件失败!'), chalk.yellow(absolutePath));
-    CONFIG.log(err);
+    logger.log(red(bold('[saveApi] 尝试写入文件失败!')), yellow(absolutePath));
+    logger.log(err);
   }
 
   return content;
@@ -145,7 +147,7 @@ const onDecodeResponse = (content, absolutePath, req, res) => {
 /** 保存 API 返回信息 */
 export const saveApi = (req, res, contentEncoding: ContentEncoding, filename = '') => {
   const config = CONFIG.renderConfig(false);
-  // CONFIG.debug('TRY saveApi...');
+  // logger.debug('TRY saveApi...');
   if (!config.isAutoSaveApi) return;
 
   filename = utils.getFileName(CONFIG.config, req, res, filename, 'save');
