@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/lzwme/simple-mock/compare/v1.5.0...v1.5.1) (2022-03-10)
+
+
+### Bug Fixes
+
+* 修复 delete require.cache 导致的内存泄漏问题 ([750af39](https://github.com/lzwme/simple-mock/commit/750af39e36ebf28951dbbd884c38eb246939bd18))
+
 ## [1.5.0](https://github.com/lzwme/simple-mock/compare/v1.4.2...v1.5.0) (2021-11-29)
 
 
