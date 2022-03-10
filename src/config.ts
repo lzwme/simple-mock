@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { color } from 'console-log-colors';
 import utilDir from './utils-dir';
+import utils from './utils';
 import { Logger } from './Logger';
 
 export const logger = Logger.getLogger('[SIMPLE-MOCK]');
@@ -87,7 +88,7 @@ const getConfigFromFile = () => {
 
     if (defaultCfg._configFileMdDate && defaultCfg._configFileMdDate !== cfgFileStat.mtimeMs) {
       logger.info(green(bold(`\n[INFO] 检测到[simple-mock]配置文件有更新：`)), yellow(bold(cfgFile)));
-      delete require.cache[cfgFile];
+      utils.clearRequireCache(cfgFile);
       CONFIG.config = null;
     }
     defaultCfg._configFileMdDate = cfgFileStat.mtimeMs;

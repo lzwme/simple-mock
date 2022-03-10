@@ -59,6 +59,25 @@ const utils = {
 
     return filename;
   },
+  clearRequireCache(filePath: string) {
+    filePath = require.resolve(filePath);
+
+    const cacheInfo = require.cache[filePath];
+    if (!cacheInfo) return;
+
+    if (cacheInfo.parent) {
+      let i = cacheInfo.parent.children.length;
+      while (i--) {
+        if (cacheInfo.parent.children[i].id === filePath) {
+          cacheInfo.parent.children.splice(i, 1);
+        }
+      }
+    }
+
+    const children = cacheInfo.children.map((d) => d.id);
+    delete require.cache[filePath];
+    children.forEach((id) => utils.clearRequireCache(id));
+  },
 };
 
 export default utils;

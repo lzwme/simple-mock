@@ -59,6 +59,15 @@ test('utils.getFileName', (t) => {
   });
 });
 
+test('utils.clearRequireCache', (t) => {
+  require('console-log-colors');
+  const filePath = require.resolve('console-log-colors');
+
+  t.is(require.cache[filePath] != null, true);
+  utils.clearRequireCache(filePath);
+  t.is(require.cache[filePath] == null, true);
+});
+
 test('utilsDir', (t) => {
   const dirName = './test/abc';
 

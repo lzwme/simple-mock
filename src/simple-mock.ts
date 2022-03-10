@@ -29,7 +29,7 @@ function tryGetContentInfo(filename: string, type: 'autosave' | 'customdata' | '
     if (!mockFileMTimes[absolutePath]) mockFileMTimes[absolutePath] = mtimeMs;
     if (require.cache[absolutePath] && mtimeMs !== mockFileMTimes[absolutePath]) {
       mockFileMTimes[absolutePath] = mtimeMs;
-      delete require.cache[absolutePath];
+      utils.clearRequireCache(absolutePath);
     }
 
     const content = require(absolutePath);
