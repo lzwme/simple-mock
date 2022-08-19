@@ -37,6 +37,8 @@ simple-mock-config.**
 build
 dist
 dist-module
+esm
+cjs
 .nyc_output
 test
 src/**.js

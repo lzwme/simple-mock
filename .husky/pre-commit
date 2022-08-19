@@ -1,7 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# npx --no-install jest
-# npx --no-install eslint
-
-yarn lint-staged
+pnpm exec flh --eslint --tscheck --only-changes # --fix
+pnpm exec flh --prettier --only-changes --fix

@@ -2,7 +2,7 @@
   "extends": "./tsconfig",
   "compilerOptions": {
     "target": "esnext",
-    "outDir": "dist-module",
+    "outDir": "esm",
     "module": "esnext"
   },
   "exclude": ["node_modules/**"]
